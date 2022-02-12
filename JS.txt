@@ -637,3 +637,236 @@ document.write('<div>123</div>')
 document.write( )  页面文档流加载完毕(比如事件)会导致页面重绘
 element.innerHTML  采取数组形式效率最高，字符串效率最低
 document.creatElement( )  效率稍微低一点
+
+十二、事件高级
+1、注册事件的两种方式
+传统方式： on开头的  onclick，特点：注册事件的唯一性；同时绑定后面的时间会覆盖前面。
+监听注册方式：addEventListener()   IE9以上支持，同一个元素同一个事件可以添加多个监听器。
+eventTarget.addEventListener(type, listener[, useCapture])
+type: 事件类型字符串，必定加引号，并且不带on
+listener：事件处理函数
+useCapture：可选参数，布尔值，默认false
+
+2、删除事件的两种方式
+1.传统注册方式eventTarget.onclick = null
+2.方法监听注册方式
+eventTarget.removeEventListener(type, listener[, usecapture])
+divs[1].addEventListener('click', fn)
+fn() {
+alert(22)
+divs[1].removeEventListener('click', fn)
+}
+
+3、DOM事件流
+1. 三个阶段：捕获阶段、目标阶段、冒泡阶段
+2.JS代码中只能执行捕获或冒泡其中的一个阶段
+3.onclick 和 attachEvent(ie) 只能得到冒泡阶段
+4.捕获阶段  如果addEventListener 第三个参数是true，那么则处于捕获阶段
+document->html->body->father->son
+5.冒泡阶段 如果addEventListener 第三个参数是false，那么则处于冒泡阶段
+son->father->body->html->document
+6.实际开发很少关注事件捕获，更关注事件冒泡
+7.有些事件没有冒泡,比如：onblur  onfocus  onmouseover  onmouseleave
+
+4、事件对象
+div.onclick = function(event) {
+console.log(event)
+conslole.log(window.event)
+event = event || window.event
+}
+1. event 就是一个事件对象 写在侦听函数的小括号里面，当形参来看
+2.事件对象只有有了事件才存在，它是系统自动创建的，不需要传递参数
+3.事件对象是事件一系列数据的相关集合，比如鼠标点击的坐标和事件的信息比如按下的哪个键
+4.事件对象可以自己命名，如：e
+5.事件对象也有兼容性问题，Ie678 通过window.event
+
+5、常见事件对象的属性和方法
+1、e.target 返回的是触发事件的对象（元素），this返回的是绑定事件的对象（元素）
+2、e.type 返回事件的类型
+3、e.preventDefault() 该方法阻止默认事件，比如不让链接跳转
+a.document.querySelect('a')
+a.addEventListener('click', function(e) {
+e.preventDefault()
+e.returnValue; // 低版本浏览器
+return false // 传统的注册方式
+})
+4、e.stopPropagation() 阻止冒泡
+son.addEventListener('click', function(e) {
+e.propagation() // 也有兼容性问题
+e.cancelBubble = true  // IE678
+}) 
+
+6、事件委托
+原理：不是每个子节点单独设置事件监听器，而是事件监听器设置在父节点上，然后利用冒泡原理影响设置每个子节点。
+事件委托的作用：只操作了一个DOM，提高了程序的性能。
+
+7、禁止选中文字和右键菜单
+1.contextmenu  禁用右键菜单
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault()
+})
+2.selectstart  禁止鼠标选中
+document.addEventListener('selectstart', function(e) {
+e.preventDefault()
+})
+
+8、鼠标事件对象和键盘事件对象
+1.获得鼠标在事件中的坐标
+e.clientX 返回鼠标相对于浏览器窗口可视区的X坐标
+e.clientX 返回鼠标相对于浏览器窗口可视区的X坐标
+e.pageX 返回鼠标相对于文档页面的X坐标 IE9+支持
+e.pageY 返回鼠标相对于文档页面的Y坐标 IE9+支持
+e.screenX 返回鼠标相对于电脑屏幕的X坐标
+e.screenY 返回鼠标相对于电脑屏幕的Y坐标
+
+9、跟随鼠标移动的小天使
+1.鼠标不断移动使用使用mousemove，在页面中给document注册事件，图片绝对定位，
+核心原理把最新的鼠标坐标设为图片的x 和 y
+document.addEventListener('mousemove', function(e) {
+let x = e.pageX
+let y = e.pageY
+pic.style.left = x - 50 + 'px'
+pic.style.top = x - 40 + 'px'
+})
+
+10、常用的键盘事件
+onkeyup 键盘被松开时触发
+onkeydown  键盘按键按下时触发
+onkeypress 键盘按键被按下时触发 不识别功能键ctrl shift ，区分大小写
+1.事件执行顺序  onkeydown -> onkeypress -> onkeyup
+2.如果使用addEventListener 不需要加on
+
+11、keyCode判断用户按下的那个键
+e.keyCode
+
+十二、BOM浏览器对象模型
+1、window对象是浏览器的顶级对象。是js访问浏览器的一个接口。
+2、窗口加载事件，等页面内容全部加载完毕之后，才会触发的事件
+window.onload = function() {} 或者
+window.addEventListener("load", function() {})
+3、DOMContentLoaded事件，仅当DOM加载完成，不包括样式表、图片，flash等
+document.addEventListener('DOMContentloaded', function() {
+alert(33)
+})
+4、调整窗口大小事件
+window.onresize = function() {}
+window.addEventListener("resize", function() {})
+1.只要窗口大小发生像素变化，就会触发这个事件，window.innerwidth当前屏幕的宽度
+5、两种定时器：1秒 = 1000毫秒
+1.window.setTimeout(调用函数，[延迟的毫秒数])，在定时器到期后执行调用函数
+1.window可以省略，可以直接写函数名。经常给定时器加标识符
+let time1 = setTimeout(callback, 2000) 
+回调函数：上一件事干完，再回头调用这个函数
+2.停止定时器
+window.clearTimeout(timeoutID定时器的名字) window可以省略
+setInterval()
+2.window.setInterval(回调函数，[间隔的毫秒数])，每隔这个时间，重复调用一次回调函数
+1.window可以省略，可以直接写函数名。经常给定时器加标识符
+2.清除定时器
+window.clearInterval(intervalID) window可以省略，参数是定时器的标识符
+6、JS的同步和异步
+同步；前一个任务结束后再执行后一个任务
+异步：一件事情花费很长时间，同时处理其他事情
+同步任务：主线程执行线
+异步任务：事件、加载、定时器添加到消息队列
+同步任务执行完，再执行异步任务
+
+7、location 对象
+location.href 获取整个URL
+location.host 返回域名
+location.post 返回端口号
+location.pathname 返回路径
+location.search 返回参数
+location.hash 返回#后面内容  链接
+
+8、设置链接
+location.href = 'http.baidu.com'
+
+5秒钟自动跳转页面
+
+9、location的方法
+location.assign()  重定向页面实现跳转，可以回退
+location.replace()  页面跳转，不能回退
+location.reload()  页面刷新，参数为true时，强制刷新。
+
+10、navigator 对象，包含浏览器对象的相关信息，常用的是userAgent
+
+11、history对象
+back()  后退功能
+forward()  前进
+go(参数)   1前进  -1后退
+
+
+12、offset偏移量
+offsetParent  	返回带有定位的父元素，没有就是Body
+offsetTop  返回相对有定位的父元素上方的偏移
+offsetLeft  返回相对有定位的父元素左方的偏移
+offsetWidth  返回元素的大小，宽度，包括padding,border
+offsetHeight  返回元素的大小，高度，包括padding,border
+
+13、offset 与 style 区别
+offset可以得到任意样式表中的样式值，获取的数值没有单位，都是只读不能赋值，包含padding + border + width
+style只能得到行内样式的值，style.width 获得的是带有单位的字符串，只获得width，style.width可读写，要想给元素更改值，需要style来改变
+
+14、clientHeight 不含边框，内容区的高度，返回数值不带单位
+clientWidth  不含边框，内容区的宽度，返回数值不带单位
+clientTop  返回元素上边框的大小
+clientLeft  返回左边框大小
+
+15、立即执行函数，不需要调用，立马能够执行
+  (function () {})()  或者  (function (){}())  第二个小括号可以看做是调用函数
+立即执行函数独立创建了一个作用域，都是局部变量，不会冲突。
+
+16、页面尺寸大小发生变化的时候，resize
+        pageShow  重新加载页面触发的事件
+
+17、scroll 系列的属性可以动态得到该元素的大小、滚动距离
+scrollTop  返回被卷去的上测距离
+scrollLeft  返回被卷去的左测距离
+scrollWidth  返回元素实际宽度 不含边框，不带单位
+scrollHeight  返回元素实际高度 不含边框，不带单位
+
+onscroll事件
+
+相对于页面 pageXOffset   pageYOffset  ie9以上支持
+
+18、三大系列主要用途
+1、offset系列主要用于获取元素的位置
+offsetLeft、offseTop
+2、client 经常用于获取元素大小
+clientWidth、clientHeight
+3、scroll经常用于获取滚动距离
+scrollTop、scrollLeft
+4、页面的滚动距离window.pageXOffset
+
+19、mouseenter事件和mouseover事件
+mouseover经过父盒子和子盒子都会触发，会多次触发
+mouseenter 只有经过自身盒子触发，不会冒泡
+
+十三、本地存储
+1、window.sessionStorage 生命周期为关闭浏览器窗口，同一个页面数据可以共享，以键值对的形式存储使用
+存储数据：sessionStorage.setItem(key, value)
+获取数据：sessionStorage.getItem(key)
+删除数据：sessionStorage.removeItem(key)
+删除所有数据：sessionStorage.clear()
+
+2、window.localStorage  生命周期永久生效，除非手动删除否则关闭页面也会存在，可以多个页面共享（同一浏览器）以键值对的形式存储。
+存储数据：localStorage.setItem(key, value)
+获取数据：localStorage.getItem(key)
+删除数据：localStorage.removeItem(key)
+删除所有数据：localStorage.clear()
+
+十四、ECharts使用五部曲
+1、下载echarts.js文件
+2、准备一个具备大小的DOM容器
+<div style="width:500px; height: 500px;"></div>
+3、初始化echarts实例对象
+ echarts.init(document.getElementById('main'))
+4、指定配置项和数据
+var option = {
+5、将配置项设置给echarts实例对象
+myChart.setOption(option)
+
+
+
+
