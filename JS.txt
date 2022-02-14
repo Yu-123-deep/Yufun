@@ -866,7 +866,136 @@ mouseenter 只有经过自身盒子触发，不会冒泡
 var option = {
 5、将配置项设置给echarts实例对象
 myChart.setOption(option)
+十五、XMLHttpRequest 基于xml发起的请求(原生)
+1、请求参数的本质是查询字符串
+2、URL编码：原则使用安全的字符表示不安全的字符，使用英文字符表示非英文的字符。
+URL编码函数：encodeURIComponent()
+URL解码函数：decodeURIComponent()
+3、数据交换的格式：服务器端与客户端之间进行数据传输与交换的格式。主要是XML和JSON格式（主要）
+4、JSON是javaScript数组和对象的字符串表示法，本质是字符串，是一种轻量级的数据交换格式，更小，更快，更易解析。
+数据类型是数字、字符串、布尔值、null、数组、对象
+属性名必须双引号包裹，字符串类型必须双引号，不能写注释，最外层必须是对象或者数组，不能使用undefined或者函数作为JSON的值
+JSON和JS对象的关系：JSON是JS对象的字符串表示法
+JSON字符串转JS对象叫反序列化：JSON.parse()，JSON反序列化
+JS对象转JSON字符串叫序列化：JSON.stringify()，JSON序列化
+5、FormData对象管理表单数据
+//  新建FormData对象
+var fd = new FormData()
+// 为 FormData新增表单项
+fd.append('uname',  'wangyufan')
+fd.append('age',  18)
+
+十三、axios
+1、Axios 是专注于网络数据请求的库，简单易用，轻量化
+axios.get('url', {params: {/*参数*/}}).then(function() {})
+axios.post('url',  {/*参数*/}).then(function() {})
+直接使用axios发起请求
+axios({
+method: '请求类型',
+url: '',
+data: {/*POST数据*/},
+params: {/*GET参数*/}
+}).then(callback)
+
+十四、同源策略和跨域
+1.什么是同源：协议、域名、端口号相同，反之跨域；
+2.同源策略：浏览器提供的安全功能，A网站的JavaScript，不允许和非同源的网站C之间，进行资源交互，		
+例如：无法读取非同源网站的Cookie、LocalStorage 和 indexedDB，无法接触非同源网站的DOM，无法向非同源地址发送ajax请求
+3.如何实现跨域数据请求：JSONP 和 CORS
+JSONP:兼容性好，只支持GET请求，不支持POST请求
+CORS:是W3C标准，支持GET和POST请求，不兼容低版本浏览器
+JSONP的实现原理：<script>标签通过src属性，请求非同源的js脚本
+4、防抖策略：当事件被触发后，延迟n秒再执行回调，如果在这n秒内事件又被触发，则重新计时。
+好处：有效减少请求次数，节约请求资源。应用：输入框搜索
+如何防抖：定义防抖函数中定义定时器，在事件中先清除定时器再打开定时器。
+5、节流：减少一段时间内事件的触发频率。应用场景：鼠标连续不断的触发某事件，只在单位时间内触发一次。
+节流阀：空可以执行下次操作，不为空，则不执行下次操作。当前操作完，将节流阀重置为空。每次操作前先判断节流阀是否为空。
+应用：定义一个节流阀，通过定位器给节流阀赋值，每次操作完成后清空节流阀。
+防抖和节流的区别：防抖：如果事件被频繁触发，防抖可以保证只有一次生效，节流：如果事件被频繁触发，节流能减少事件触发的频率，节流是有选择性的执行一部分事件。
+
+十五、HTTP协议简介
+1、通信：信息的传递与交换。通信三要素：通信的主体、内容和方式；
+2、通信协议HTTP协议：客户端与服务器实现网页内容的传输，遵守网页内容的传输协议。
+3、http协议的交互模型：采用了请求/响应的交互模型。
+客户端发起的请求叫HTTP请求，客户端发送到服务器的消息叫HTTP请求消息也叫HTTP请求报文。
+HTTP请求消息由请求行、请求头部、空行和请求体4个部分组成
+请求行由请求方式、URL和HTTP协议版本组成，之间用空格隔开
+请求头部用来描述客户端的基本信息，从而把客户端的相关信息告知给服务器，如：
+user-Agent  用来说明当时是什么类型的浏览器
+content-Type  用来描述发送到服务器的数据格式
+Accept  用来描述客户端能够接受什么类型的返回内容
+Accept-Language 用来描述客户端期望接受哪种人类语言
+请求头部由多行键值对组成，每行的键和值由冒号分隔
+空行，分隔请求头和请求体，只有POST请求才有请求体，GET请求没有请求体
+
+响应消息是服务器响应给客户端的消息内容，也叫响应报文。
+HTTP响应消息由状态行、响应头部、空行和响应体4个部分组成
+状态行由HTTP协议版本、状态码和状态码的文本描述3个部分组成，使用空格隔开
+响应头部用来描述服务器的基本信息，响应头部由多行键值对组成，每行的键值用英文的冒号分隔
+空行用来分隔响应头部和响应体
+响应体中存放的是服务器响应给客户端资源内容，看response
+
+4、HTTP请求方法，用来表明要对服务器上的资源执行的操作，最常用的请求方法是GET和POST
+GET：向服务器要资源（查询）
+POST：向服务器提交资源，提交表单和上传文件（新增），数据包含在请求体中提交给服务器
+PUT：提交资源，并使用提交的新资源替换旧资源（修改）
+DELETE：请求服务器删除指定资源（删除）
+
+5、HTTP响应状态码，用来标识响应的状态
+HTTP响应状态码的组成及分类
+1**   信息  
+2**  成功
+3**  重定向，需要进一步的操作以完成请求
+4**  客户端错误
+5**  服务器错误
+
+十六、GIT的基础概念
+1、SVN差异比较：基于差异的版本控制，好处：节省磁盘空间，缺点：耗时，效率低
+2、GIT快照：在原有的文件版本基础上重新生成一份文件，类似于备份，优点：版本切换的非常快，缺点：占用磁盘空间大，特点：空间换时间，GIT几乎所有的操作都是在本地执行，只需要访问本地文件和资源，
+3、GIT管理的项目有三个区域：工作区、暂存区、GIT仓库
+GIT的三种状态：已修改modified(还没放到暂存区)、已暂存staged（放入暂存区）、已提交committed（保存着特定版本）
+4、安装完Git之后
+1、设置自己的用户名和邮件地址
+git config --global user.name "wangyufan"
+git config --global user.email "1339433040@qq.com"
+--global 只需要运行一次，就永久生效
+2、查看git所有全局配置项
+git config --list --global
+3、获取帮助信息 git config -h快速参考 或git help config 无需联网打开帮助手册
+4、获取git仓库的两种方式
+将尚未进行版本控制的本地目录转换为GIT仓库
+1.鼠标右键打开git Bash
+2.git init 将当前目录转化为git仓库
+3.工作区文件的4种状态
+未被git管理：未跟踪（untracked） 一般新建的文件
+已被Git管理：未修改、已修改、已暂存
+4.git status 查看文件处于什么状态，精简输出  git status -s
+5.git add index.html 开始跟踪一个文件  添加多个文件git add .
+6.git commit -m '提交的消息'  将文件提交到仓库中进行保存
+7.从暂存区中移除某个文件 git reset HEAD 要移除的文件名称
+git reset HEAD . 移除所有
+8.git commit -a -m '描述'   跳过暂存区直接提交到仓库
+9.查看历史  git log 
+10.在一行展示所有提交历史
+git log --pretty=oneline
+根据指定ID回退到指定版本
+git reset --hard ID
+在旧版本中查看历史
+git reflog --pretty=oneline
+再次根据最新的ID提交到最新版本
+git reset --hard ID
+在未add之前stash
+git stash [save message保存，save为可选项，message为本次保存的注释
+
+git stash list 查看所有保存的记录列表
+
+git stash pop stash@{num}  只能恢复一次
+
+git stash apply stash@{num} 可回复多次
+git stash drop stash@{num} 删除某个保存，
+
+git stash clear 删除所有保存
 
 
 
-
+从其他服务器克隆一个已存在的仓库
