@@ -999,3 +999,61 @@ git stash clear 删除所有保存
 
 
 从其他服务器克隆一个已存在的仓库
+
+十六、开源项目管理平台
+1、git push -u origin master  第一次推送到远程仓库
+2、本地分支操作  基本基于master分支创建新分支
+1.查看分支列表  
+ git branch
+2.基于当前分支，创建新分支，新分支代码与当前分支完全一样，创建完成还是处于当前分支
+git branch 分支名称
+3.切换指定分支 
+ git checkout 分支名称
+4.创建新分支并立即切换到新分支  
+git checkout -b 分支名称
+5. 合并分支
+1.  切换到主分支  git checkout master
+2.  在master 分支上运行 git merge命令，将login分支的代码合并到主分支   git  merge login
+6、删除分支，删除时不处于这个分支
+git branch -d 分支名称
+7、遇到冲突时的分支合并，在reg分支和master分支同时修改同一个文件时，在主分支上进行合并。
+git checkout master
+git merge reg   （此时发生冲突）
+打开包含冲突的文件，手动解决冲突之后
+git add .
+git commit -m '解决了合并冲突的问题'
+
+8、将本地分支推送到远程仓库
+-u  表示第一推送将本地分支与远程分支关联
+git push -u 远程仓库别名 本地分支名称：远程分支名称
+例：git push -u origin payment:pay
+如果希望远程分支的名称和本地分支名称保持一致，可以对命令进行简化
+git push -u origin payment
+
+9、查看远程仓库中所有的分支列表
+git remote show 远程仓库名称
+
+10、跟踪分支：从远程仓库中把远程分支下载到本地仓库
+git checkout 远程分支的名称
+例：git checkout pay
+从远程仓库中，把对应得远程分支下载到本地仓库，并把下载的本地分支进行重命名
+git checkout -b 本地分支名称 远程仓库名称/远程分支名称
+例：git checkout -b payment origin/pay
+
+11、拉去远程分支最新的代码
+git pull 
+12、删除远程分支
+删除远程仓库中，指定名称的远程分支
+git push 远程仓库名称 --delete 远程仓库分支名称
+例：git push origin --delete pay
+git branch -D reg  不管是否合并都强制删除本地分支
+
+
+十七、包管理工具
+1. 执行npm i 一次性安装所有的包
+2.使用cors中间件解决跨域问题
+npm i cors 
+const cors = require('cors')  //  在路由之前导入
+app.use(cors())  //  配置中间件
+
+十八、vue学习
