@@ -1056,4 +1056,222 @@ npm i cors
 const cors = require('cors')  //  在路由之前导入
 app.use(cors())  //  配置中间件
 
-十八、vue学习
+十八、vue概述
+1.vue渐进javaScript框架：声明式渲染->组件系统->客户端路由->集中式状态管理->项目构建
+2.基本使用
+      vue 的基本使用步骤
+        1. 需要提供标签填充数据
+        2.引入vue.js库文件
+        3.可以使用vue的语法做功能了
+        4.把vue提供的数据填充到标签里面
+
+    	el  元素的挂载位置（CSS选择器或DOM元素）
+     	data:  模型数据（值是一个对象）
+
+{{}} 插值表达式，将数据填充到html标签中，支持基本计算操作
+
+原理：编译过程（vue语法->原生语法）
+3.模板语法概览
+插值表达式
+指令
+事件绑定
+属性绑定
+样式绑定
+分支循环结构
+
+4、指令：本质是自定义属性，格式以v-开始
+1.v-cloak  插值表达式存在闪动，使用v-vloak，原理先隐藏，替换好值后再显示最终的值
+2.数据绑定指令：
+v-text  填充纯文本  相比插值更简洁
+v-html  填充html片段，存在安全问题，本网站数据可以使用，第三方的数据不可以用
+v-pre  显示原始信息，跳过编译过程
+3.数据响应式
+响应式：1.H5中的响应式（屏幕尺寸变化导致样式变化）2.数据响应式（数据的变化导致页面内容的变化）	
+数据绑定：将数据填充到标签中
+v-once：只编译一次，显示内容之后不再具有响应式的功能
+
+4.双向数据绑定
+v-model='' 页面内容改变数据，数据也改变页面内容，主要用于表单输入
+MVVM设计思想：
+M（model）：data, plain JavaScript Object
+V（view）：DOM
+VM（View-Model）vue（DOM listeners(v->M)  Data bindings(M->v)）
+
+5.事件绑定
+1.v-on:click='num++'  简写  @click='num++'
+2.事件函数的调用方式
+1.直接绑定函数名称： @click='say'
+2.调用函数： @click='say()'
+3.事件函数参数传递（普通参数， 事件对象）
+v-on:click='say('hi', $event)'
+1.如果事件直接绑定函数名称，那么默认会传递事件对象作为事件函数的第一个参数
+2.如果事件绑定函数调用，那么事件对象必须作为最后一个参数显示传递，并且事件对象的名称必须是$event
+4.事件修饰符
+.stop 阻止冒泡  v-onclick.stop="handle"
+.prevent 阻止默认行为  v-onclick.prevent="handle"
+5.按键修饰符
+.enter 回车键   v-on:keyup.enter = 'submit'
+.delete删除键   v-on:keyup.delete = 'handle'
+6.自定义按键修饰符
+Vue.config.keyCodes.fi = 65   //  event事件对象里面的keyCode
+规则：自定义按键修饰符名字是自定义的，但是对应得值必须是按键对应得event.keyCode值
+@keyup.65 = 'handle'
+
+6.属性绑定
+1.vue动态处理属性  v-bind用法  v-bind:href = 'url'
+v-bind:href = 'url'   缩写  :href='url'
+2. v-model 底层实现原理分析
+<input v-bind:value='msg' v-on:input="msg=$event.target.value"></input>
+
+7.样式绑定-class样式处理
+1.对象语法  :class='{ active: isActive }'
+对象形式通过属性值为true或false来控制属性是否显示 
+2.数组语法  :class='[ activeClass,  errorClass ]'
+动态样式:class 不能和行内样式style一起用
+
+8.样式绑定-class样式的三个小细节
+1.对象绑定和数组绑定可以结合使用
+:class='[activeClass, errorClass, {test: isTest} ]'
+.test {
+color: red;
+}
+data: {
+isTest: true;
+}
+2.class绑定的值可以简化操作
+简化数组形式
+:class='arrClasses'
+.active {
+color: red;
+}
+another {
+border: 1px solid red;
+}
+data: {
+arrClasses: ['active', 'another']
+}
+
+简化对象形式
+:class='objClasses'
+data: {
+objClasses: { active: true,  another: true }
+}
+3.默认的class如何处理？
+class='base'  :class='arrClasses'   //  没影响
+
+
+9.样式绑定-style样式处理
+1.  :style = '{ color: activeColor, fontsize: fontsize }'
+简化对象形式： :style = 'objStyle'
+data: {
+objStyle: {
+border: '1px solid red',
+width: '300px'
+}
+}
+
+2.  :style = '[baseStyles, overridings]'  // 数组里面是两个对象形式，可以覆盖
+
+10.分支循环结构
+1. 分支结构
+v-if  控制元素是否渲染到页面
+v-else
+v-else-if
+v-show 原理控制元素样式是否显示  display: none （已经渲染到页面）
+频繁显示隐藏建议v-show 性能较好
+
+2.循环结构
+v-for遍历数组
+<li v-for='item in list'>{{ item }}</li>
+<li v-for='(item, index) in list'>{{ item +'--'+ index }}</li>
+key的作用：帮助vue区分不同的元素，从而提高性能
+<li :key='item.id' v-for='(item, index) in list'>{{ item +'---'+ index }}</li>
+
+v-for遍历对象
+v-for='(value, key, index) in object'  值，键， 索引
+v-if 和 v-for结合使用
+v-if='value === 12' v-for='(value, key, index) in object'
+
+11、表单域的修饰符
+1. v-model.number = 'age'   转化为数值
+2. trim 去掉开始和结尾的空格  v-model.trim = 'age'
+3. lazy 将input 事件切换为change事件(只有当失去焦点的时候才会触发)
+ v-model.lazy = 'age'
+
+12、自定义指令
+1. 为何需要自定义指令：内置指令不满足需求
+2. 自定义指令语法规则（获取元素焦点）
+Vue.directive('focus', {
+inserted: function(el) {
+el.focus()
+}
+})
+<input type='text' v-focus></input>
+
+3. 带参数的自定义指令（改变元素的背景颜色）
+Vue.directives('color', {
+inseted: function(el, binding) {}
+el.style.backgroundColor = binding.value.color
+})
+<input type='text' v-color='{color: 'orange'}'>
+
+4. 局部指令
+directives: {
+focus: {
+inserted: function(el) {
+ 	el.focus()
+}
+}
+}
+
+13、计算属性
+1.为何需要计算属性：可以使得模板内容更加整洁
+2.计算属性的用法
+conputed: {
+reverseMsg: function() {
+return this.msg.split(' ').reverse().join()
+}
+}
+3.计算属性和方法的区别
+计算属性基于他们的依赖进行缓存的
+方法不会缓存
+
+14、侦听器：数据一旦发生变化就通知侦听器绑定的方法。
+1. 应用场景：数据变化时执行异步或开销较大的操作。
+
+15、过滤器
+1. 自定义过滤器
+ 	Vue.filter(' 过滤器名称 '， function(value) {
+// 过滤器业务逻辑
+})
+2. 过滤器的使用
+<div>{{ msg | upper }}</div>
+<div>{{ msg | upper | lower }}</div>
+<div v-bind:id = 'id | fromId '></div>
+3. 局部过滤器
+filters: {
+captilize: function() {
+return  ...
+}
+}
+4.带参数的过滤器
+Vue.filter('format', function(value, arg1) {
+// value 就是过滤器传递过来的参数
+})
+5. 过滤器的使用
+<div>{{  date | format('yyyy-mm-dd') }}</div>
+
+
+16. 生命周期
+1.主要阶段
+挂载（初始化相关属性）
+beforeCreate  在实例初始化后，数据观测（data observer）和 event/watcher 事件配置之前调用
+created 在实例创建完成之后被调用，在这一步，实例已完成了以下配置：数据观测（data oberver），属性和方法的运算， watch/event事件回调 然而，挂载阶段还没开始，							   $el 属性目前不可见 
+beforeMount  在挂载开始之前被调用，相关的渲染函数首次被调用
+mounted  el 被新创建的 vm.$el替换，挂载成功
+更新（元素或组件的变更操作）
+beforeUpdate  数据更新时调用
+updated  组件 DOM 已经更新，组件更新完毕
+销毁 （销毁相关属性）
+beforeDestroy  实例销毁之前调用
+destroyed  实例销毁之后调用
