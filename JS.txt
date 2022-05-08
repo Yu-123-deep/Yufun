@@ -866,6 +866,22 @@ mouseenter 只有经过自身盒子触发，不会冒泡
 var option = {
 5、将配置项设置给echarts实例对象
 myChart.setOption(option)
+6、配置项手册
+title：标题组件
+tooltip：提示框组件
+legend：图例组件
+toolbox：工具栏
+grid：直角坐标系内绘图网格
+xAxis：直角坐标系gird中的x轴
+yAxis：直角坐标系grid中的y轴
+series：系列列表，每个系列通过type决定自己的图表类型
+color：调色盘颜色列表
+
+7、series 系列列表
+type：类型（line 是折线，bar是柱形）
+name: 系列名称，用于tooltip显示，legend的图例筛选变化
+stack：数据堆叠，如果设置相同值则会数据堆叠，如果指定不同值，或者去掉这个属性则不会堆叠。
+
 十五、XMLHttpRequest 基于xml发起的请求(原生)
 1、请求参数的本质是查询字符串
 2、URL编码：原则使用安全的字符表示不安全的字符，使用英文字符表示非英文的字符。
@@ -1332,3 +1348,117 @@ template: '<div>{{ title }}</div>'
 <button @click='$emit(' enlarge-text ', 5)'></button>
 6.父组件监听子组件的事件
 <menu-item  @enlarge-text='fontSize +=  $event'></menu-item>
+
+22、兄弟组件之间的通信
+1. 单独的事件中心
+var eventHub = new Vue()
+2.监听事件与销毁事件
+eventHub.$on('add-todo',  addTodo)
+eventHub.$off('add-todo')
+3.触发事件
+eventHub.$emit('add-todo',  id)
+
+23、组件插槽基本用法
+1.插槽位置  注意：子组件只有一个根元素
+Vue.component('aler-slot', {
+template: '
+<div>
+<span>Error!</span>
+<slot></slot>
+</div>
+'
+})
+2.插槽内容
+<aler-slot>hello hi  yufan</aler-slot>
+
+24、具名插槽
+1.插槽定义
+<div class="container">
+<header>
+<slot name="header"></slot>
+</header>
+<main>
+<slot></slot>
+</main>
+<footer>
+<slot name="footer"></slot>
+</footer>
+</div>
+
+2.插槽内容
+<base-layout>
+<h1 slot='header'></h1>
+<p>主要内容</p>
+<p slot="footer">底部内容</p>
+</base-layout>
+
+25、作用域插槽：父组件获取子组件的数据并进行加工处理
+1. 插槽定义
+<ul>
+<li v-for='item in List'  :key="item.id">
+<slot :item='item'>
+{{ item.name }}
+</slot>
+</li>
+</ul>
+
+2. 插槽内容
+<fruit-list :list='list'>
+<template slot-scope='slotProps'>
+<strong v-if='slotProps.item.current'>{{ slotProps.item.name }}</strong>
+</template>
+</fruit-list>
+
+27、路由的基本概念和原理
+1. 后端路由：根据不同的用户URL请求，返回不同的内容。本质：URL请求地址与服务器资源之间的对应关系。存在性能问题。
+2. 前端路由：根据不同的用户事件，显示不同的页面内容，本质：用户事件与事件处理函数之间的对应关系。
+
+28、Vue-router基本使用
+1. 基本使用步骤
+1.引入相关的库文件
+<script type="text/javascript" src="./vue-router.js"></script>
+2.添加路由链接
+<router-link to="/user">User</router-link>
+router-link 是vue中提供的标签，默认会被渲染为a标签
+to属性会被渲染为href属性
+to属性的值会被渲染为#开头的hash地址
+3.添加路由填充位(也叫路由占位符)
+通过路由规则匹配到的组件，将会被渲染到router-view所在的位置
+<router-view></router-view>
+4.定义路由组件
+var  user  =  {
+template: '<div>user</div>'
+}
+var register = {
+template: '<div>register</div>'
+}
+5.配置路由并创建路由实例
+// 创建路由实例对象
+var router = new VueRouter({
+// routes 是路由规则数组
+routes: [
+// 每个路由规则都是一个配置对象，至少包含path和component两个属性
+// path表示当前路由规则匹配的hash地址
+// component 表示当前路由规则对应要展示的组件
+{path: '/user', component: User},
+{path: '/register', component: Register}
+]
+})
+6.把路由挂载到Vue根实例中
+new Vue({
+el: '#app',
+// 为了能够让路由规则生效，必须把路由对象挂载到vue实例对象上
+router
+})
+
+2.路由重定向
+指的是：用户A访问地址A的时候，强制用户跳转到地址C，从而展示特定的组件页面；
+通过路由规则的redirect属性，指定一个新的路由地址，可以很方便的设置路由重定向。
+var router = new VueRouter({
+routes: [
+// 其中，path表示需要被重定向的原地址，redirect 表示将要被重定向的新地址
+{path: '/',  redirect: '/user'},
+{path: '/', component: 'User'},
+{path: '/', component: 'Register'}
+]
+})
