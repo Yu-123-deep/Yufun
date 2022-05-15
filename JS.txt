@@ -881,6 +881,19 @@ color：调色盘颜色列表
 type：类型（line 是折线，bar是柱形）
 name: 系列名称，用于tooltip显示，legend的图例筛选变化
 stack：数据堆叠，如果设置相同值则会数据堆叠，如果指定不同值，或者去掉这个属性则不会堆叠。
+radius: ['10%',  '70%']  // 饼图半径，第一个是内半径，第二个是外半径，实现饼图大小
+center: ['50%', '50%']   //  图表中心位置left50% top50% 距离图表DOM容器
+roseType: 'radius'   //  radius 是半径模式，另外一种是area 面积模式
+ 
+8、tooltip: {   //  提示框组件
+trigger:  'item'  //  触发方式，item意思是放到数据对应图形上触发提示
+//  格式化提示内容
+//  a 代表series系列图表名称
+//  b 代表series数据名称data里面的name
+//  c 代表series数据值data里面的value
+//  d 代表当前数据/总数据的比例
+formatter: '{a}  <br/>{b} : {c} ({d}%)'
+}
 
 十五、XMLHttpRequest 基于xml发起的请求(原生)
 1、请求参数的本质是查询字符串
@@ -1462,3 +1475,48 @@ routes: [
 {path: '/', component: 'Register'}
 ]
 })
+
+3.嵌套路由：点击父级路由链接显示模板内容，模板内容又有自己路由链接，点击子级路由链接显示子级模板内容。
+1. 父路由组件模板
+父路由链接，父路由填充位
+<p>
+<router-link to='/user'>user</router-link>
+<router-link to='/register'>register</router-link>
+</p>
+<div>
+//  路由占位符
+<router-view></router-view>
+</div>
+
+2. 子级路由模板
+子路由链接、子路由填充位
+const register = {
+template: '
+<div>
+<h3>register  组件</h3>
+<router-link to='/register/tab1'>tab1</router-link>
+<router-link to='/register/tab2'>tab2</router-link>
+
+//  子路由填充位
+<router-view/>
+</div>
+'
+}
+
+3.父级路由通过children属性配置子级路由
+const router = new VueRouter({
+routes: [
+{ path: '/user', component: User },
+{
+path: '/register',
+component: Register,
+// 通过children属性，为/register 添加子路由规则
+children: [
+{ path: '/register/tab1', component: tab1 },
+{ path: '/register/tab2', component: tab2 }
+]
+}
+]
+})
+
+
